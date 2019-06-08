@@ -1,9 +1,18 @@
 {
-  "name": "package-fields",
+  "name": "pf",
   "version": "1.0.0",
-  "main": "index.js",
+  "bin": "index.js",
   "description": "view package.json fields in cli",
-  "keywords": [ "package", "fields", "json", "cli" ],
+  "preferGlobal": true,
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "package",
+    "fields",
+    "json",
+    "cli"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cdrani/package-fields.git"
