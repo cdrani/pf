@@ -1,0 +1,17 @@
+{
+  "name": "package-fields",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "view package.json fields in cli",
+  "keywords": [ "package", "fields", "json", "cli" ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdrani/package-fields.git"
+  },
+  "author": "cdrani",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cdrani/package-fields/issues"
+  },
+  "homepage": "https://github.com/cdrani/package-fields"
+}
