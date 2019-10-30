@@ -44,10 +44,10 @@ const getFields = async () => {
             }
         });
         return prettyLog(results);
-    } else {
-        const { name, version, description } = data;
-        return prettyLog({ name, version, description });
     }
+
+    const { name, version, description } = data;
+    return prettyLog({ name, version, description });
 };
 
 getFields();
