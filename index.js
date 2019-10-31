@@ -1,53 +1,69 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
+const { promisify } = require("util");
+
+const fsAccess = promisify(fs.access);
+const fsReadFile = promisify(fs.readFile);
 
 const fields = process.argv.slice(2);
 const filePath = `./package.json`;
 
-const checkFile = async () =>
-    new Promise((resolve, reject) => {
-        fs.access(filePath, fs.F_OK, err => {
-            if (err) {
-                reject(false);
-            }
-            resolve(true);
-        });
-    });
+const checkFile = async () => {
+    let fileExists = false;
 
-const readJsonFile = async () =>
-    new Promise((resolve, reject) => {
-        const fileExists = checkFile();
-        if (fileExists) {
-            fs.readFile(filePath, "utf8", (err, data) => {
-                if (err) {
-                    reject("package.json can not be read.");
-                }
+    try {
+        await fsAccess(filePath);
+        fileExists = true;
+    } catch (e) {
+        fileExists = false;
+    } finally {
+        return fileExists;
+    }
+};
 
-                const jsonData = JSON.parse(data);
-                resolve(jsonData);
-            });
+const readJsonFile = async () => {
+    const fileExists = await checkFile();
+    if (fileExists) {
+        try {
+            const data = await fsReadFile(filePath, "utf8");
+            return JSON.parse(data);
+        } catch (e) {
+            return "package.json could not be read.";
         }
-    });
+    }
+    return "package.json file does not exist.";
+};
 
-const prettyLog = data => {
-    console.log(JSON.stringify(data, null, 2));
+const jsonify = data => {
+    if (Object.keys(data).length) {
+        console.log(JSON.stringify(data, null, 4));
+    } else {
+        console.log(data);
+    }
+};
+
+const prettyLog = (results, data) => {
+    if (typeof data !== "object" || !Object.keys(data).length) {
+        console.log("Could not read fields from package.json.");
+    } else if (fields.length) jsonify(results);
+    else {
+        const { name, version, description } = data;
+        jsonify({ name, version, description });
+    }
 };
 
 const getFields = async () => {
     const results = {};
     const data = await readJsonFile();
-    if (fields.length) {
-        fields.forEach(field => {
-            if (data[field]) {
-                results[field] = data[field];
-            }
-        });
-        return prettyLog(results);
-    }
 
-    const { name, version, description } = data;
-    return prettyLog({ name, version, description });
+    fields.forEach(field => {
+        if (data[field]) {
+            results[field] = data[field];
+        }
+    });
+
+    return prettyLog(results, data);
 };
 
 getFields();
